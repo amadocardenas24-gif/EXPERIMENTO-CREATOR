@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Generator Pro + Barra de Progreso</title>
+    <title>Generador AR Ultra-Intuitivo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle, #1a1a2e, #16213e);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a12;
             color: white;
             min-height: 100vh;
             display: flex;
@@ -18,53 +18,59 @@
             padding: 20px;
         }
         .container {
-            max-width: 500px;
+            max-width: 480px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            border-radius: 25px;
-            padding: 30px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
             border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
         }
         .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { color: #00f2fe; font-size: 26px; }
+        .header h1 { color: #00f2fe; font-size: 28px; margin-bottom: 5px; }
+        .header p { opacity: 0.6; font-size: 14px; }
+
         .file-input { display: none; }
         .file-label {
             display: flex;
             align-items: center;
-            background: rgba(255,255,255,0.07);
-            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            padding: 18px;
             border-radius: 15px;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             cursor: pointer;
-            border: 2px dashed rgba(255,255,255,0.1);
-            transition: 0.3s;
+            border: 1px dashed rgba(255,255,255,0.2);
+            transition: all 0.3s;
         }
-        .file-label:hover { border-color: #00f2fe; background: rgba(0, 242, 254, 0.1); }
+        .file-label:hover { border-color: #00f2fe; background: rgba(0, 242, 254, 0.08); }
         .file-label i { font-size: 24px; margin-right: 15px; color: #00f2fe; }
-        .selected-info { font-size: 13px; color: #adff2f; margin-bottom: 15px; display: none; }
+        
+        .selected-info { font-size: 13px; color: #adff2f; margin-bottom: 15px; display: none; padding-left: 10px; }
+        
         .generate-btn {
             width: 100%;
-            padding: 18px;
+            padding: 20px;
             border: none;
-            border-radius: 15px;
+            border-radius: 18px;
             background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-            color: #1a1a2e;
-            font-weight: bold;
+            color: #0a0a12;
+            font-weight: 800;
             font-size: 18px;
             cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.3);
             transition: 0.3s;
         }
-        #status { text-align: center; margin-top: 15px; font-size: 14px; opacity: 0.8; }
+        .generate-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0, 242, 254, 0.4); }
+        #status { text-align: center; margin-top: 20px; font-size: 14px; color: #888; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1><i class="fas fa-loader"></i> AR Progress Gen</h1>
-        <p>Experiencia con carga visual</p>
+        <h1><i class="fas fa-expand-arrows-alt"></i> AR Experience Gen</h1>
+        <p>Intuitivo • Con Sonido • Con Progreso</p>
     </div>
 
     <input type="file" id="imageInput" accept="image/*" class="file-input">
@@ -72,7 +78,7 @@
     <div id="info-image" class="selected-info"></div>
 
     <input type="file" id="videoInput" accept="video/*" class="file-input">
-    <label for="videoInput" class="file-label"><i class="fas fa-video"></i> 2. Video con Audio</label>
+    <label for="videoInput" class="file-label"><i class="fas fa-video"></i> 2. Video Overlay</label>
     <div id="info-video" class="selected-info"></div>
 
     <input type="file" id="mindInput" accept=".mind" class="file-input">
@@ -80,9 +86,9 @@
     <div id="info-mind" class="selected-info"></div>
 
     <button class="generate-btn" onclick="generateProject()">
-        <i class="fas fa-download"></i> GENERAR PROYECTO
+        <i class="fas fa-rocket"></i> GENERAR PROYECTO ZIP
     </button>
-    <div id="status">Esperando archivos...</div>
+    <div id="status">Sube tus archivos para empezar</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -96,7 +102,7 @@
             if(e.target.files[0]) {
                 files[type] = e.target.files[0];
                 const info = document.getElementById('info-' + type);
-                info.innerText = "✓ " + e.target.files[0].name;
+                info.innerHTML = `<i class="fas fa-check-circle"></i> ${e.target.files[0].name}`;
                 info.style.display = "block";
             }
         });
@@ -104,11 +110,11 @@
 
     async function generateProject() {
         if (!files.image || !files.video || !files.mind) {
-            alert("Sube los 3 archivos");
+            alert("Por favor, selecciona los 3 archivos obligatorios.");
             return;
         }
 
-        document.getElementById('status').innerText = "Empaquetando...";
+        document.getElementById('status').innerText = "Empaquetando archivos...";
         const zip = new JSZip();
 
         zip.file(files.image.name, files.image);
@@ -121,9 +127,9 @@
         const content = await zip.generateAsync({type: "blob"});
         const link = document.createElement('a');
         link.href = URL.createObjectURL(content);
-        link.download = "ar_pro_con_progreso.zip";
+        link.download = "experiencia_AR_intuitiva.zip";
         link.click();
-        document.getElementById('status').innerText = "¡Completado!";
+        document.getElementById('status').innerText = "¡Proyecto listo!";
     }
 
     function createARHTML(mind, video, img) {
@@ -131,58 +137,70 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Experience</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"><\/script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"><\/script>
     <style>
-        body { margin: 0; overflow: hidden; font-family: sans-serif; background: #000; }
+        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #000; }
         
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #111; color: #fff; z-index: 10000;
+            background: linear-gradient(180deg, #111 0%, #000 100%);
+            color: #fff; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 30px; text-align: center; box-sizing: border-box;
         }
 
-        /* BARRA DE PROGRESO */
+        #target-preview {
+            width: 80%; max-width: 250px;
+            border-radius: 20px;
+            border: 3px solid #00f2fe;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.4);
+            margin-bottom: 25px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        h2 { font-size: 24px; margin: 0 0 10px 0; color: #00f2fe; }
+        p { font-size: 16px; margin: 0 0 30px 0; opacity: 0.8; line-height: 1.4; }
+
         #progress-container {
-            width: 70%; max-width: 300px; height: 10px;
+            width: 80%; max-width: 250px; height: 8px;
             background: rgba(255,255,255,0.1);
-            border-radius: 20px; margin-top: 20px;
-            display: none; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px; display: none; overflow: hidden;
         }
-        #progress-fill {
-            width: 0%; height: 100%;
-            background: linear-gradient(90deg, #00f2fe, #4facfe);
-            transition: width 0.3s;
-        }
-        #loading-text { font-size: 12px; margin-top: 10px; color: #00f2fe; display: none; }
+        #progress-fill { width: 0%; height: 100%; background: #00f2fe; transition: width 0.3s; }
 
         #start-btn {
-            padding: 18px 35px; background: #00f2fe; color: #000;
-            border: none; border-radius: 50px; font-weight: bold; cursor: pointer;
+            padding: 20px 40px; background: #00f2fe; color: #000;
+            border: none; border-radius: 50px; font-weight: bold; font-size: 18px;
+            cursor: pointer; box-shadow: 0 10px 25px rgba(0, 242, 254, 0.4);
         }
 
         #sound-btn {
-            position: fixed; bottom: 15%; left: 50%; transform: translateX(-50%);
-            padding: 20px 40px; background: #adff2f; color: #000;
-            border-radius: 50px; font-weight: bold; display: none; z-index: 999;
-            border: none; animation: pulse 1.5s infinite;
+            position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%);
+            padding: 20px 35px; background: #adff2f; color: #000;
+            border-radius: 50px; font-weight: 900; display: none; z-index: 999;
+            border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: pulse 1.5s infinite; cursor: pointer;
         }
 
-        @keyframes pulse {
-            0% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.1); }
-            100% { transform: translateX(-50%) scale(1); }
-        }
+        @keyframes pulse { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.08); } }
     </style>
 </head>
 <body>
 
     <div id="start-screen">
-        <img src="${img}" style="width: 120px; border-radius: 10px; margin-bottom: 20px; border: 2px solid #00f2fe;">
-        <button id="start-btn" onclick="init()">ACEPTAR Y EMPEZAR</button>
+        <p style="font-size: 12px; letter-spacing: 2px; margin-bottom: 10px;">INSTRUCCIONES</p>
+        <img id="target-preview" src="${img}">
+        <h2>Escanea esta imagen</h2>
+        <p>Al pulsar el botón, apunta con tu cámara a la imagen de arriba para ver la magia.</p>
+        
+        <button id="start-btn" onclick="init()">EMPEZAR AHORA</button>
         
         <div id="progress-container"><div id="progress-fill"></div></div>
-        <p id="loading-text">Cargando motor AR...</p>
+        <p id="loading-text" style="display:none; font-size: 14px; margin-top: 15px; color: #00f2fe;">Cargando experiencia...</p>
     </div>
 
     <button id="sound-btn">?? ACTIVAR SONIDO</button>
@@ -205,37 +223,25 @@
         const video = document.getElementById('vid');
         const soundBtn = document.getElementById('sound-btn');
         const startBtn = document.getElementById('start-btn');
-        const progCont = document.getElementById('progress-container');
         const progFill = document.getElementById('progress-fill');
-        const loadText = document.getElementById('loading-text');
 
         function init() {
-            // Cambiar UI
             startBtn.style.display = 'none';
-            progCont.style.display = 'block';
-            loadText.style.display = 'block';
+            document.getElementById('progress-container').style.display = 'block';
+            document.getElementById('loading-text').style.display = 'block';
 
-            // Iniciar Motor
             const sceneEl = document.querySelector('a-scene');
-            const system = sceneEl.systems['mindar-image-system'];
-            system.start();
+            sceneEl.systems['mindar-image-system'].start();
 
-            // Simular carga de archivos
             let p = 0;
             const interval = setInterval(() => {
-                p += Math.random() * 10;
-                if (p > 90) p = 90; // Esperar al evento real para el 100%
+                p += 5; if (p > 90) clearInterval(interval);
                 progFill.style.width = p + '%';
-            }, 200);
+            }, 100);
 
-            // Escuchar cuando el AR esté realmente listo
             sceneEl.addEventListener("arReady", () => {
-                clearInterval(interval);
                 progFill.style.width = '100%';
-                loadText.innerText = "¡Listo! Escanea la imagen";
-                setTimeout(() => {
-                    document.getElementById('start-screen').style.display = 'none';
-                }, 800);
+                setTimeout(() => { document.getElementById('start-screen').style.display = 'none'; }, 500);
             });
         }
 
@@ -243,9 +249,7 @@
         let timer;
 
         target.addEventListener("targetFound", () => {
-            timer = setTimeout(() => {
-                soundBtn.style.display = "block";
-            }, 2000); 
+            timer = setTimeout(() => { soundBtn.style.display = "block"; }, 2000); 
         });
 
         target.addEventListener("targetLost", () => {
